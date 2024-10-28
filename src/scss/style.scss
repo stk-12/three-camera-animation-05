@@ -1,0 +1,139 @@
+@import"https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap";
+
+:root {
+}
+
+body {
+  font-family: Bebas Neue,cursive;
+  color: #fff;
+  overflow-x: hidden;
+  // background: #f44336;
+  // background: #f4b436;
+  // background: rgb(208,228,243);
+  // background: linear-gradient(0deg, rgba(208,228,243,1) 0%, rgba(86,157,225,1) 50%, rgba(47,101,190,1) 100%);
+
+  position: relative;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    // background: rgb(208,228,243);
+    // background: linear-gradient(0deg, rgba(208,228,243,1) 0%, rgba(86,157,225,1) 50%, rgba(47,101,190,1) 100%);
+    // background: rgb(159,214,255);
+    // background: linear-gradient(0deg, rgba(159,214,255,1) 0%, rgba(86,157,225,1) 50%, rgba(47,101,190,1) 100%);
+    background: linear-gradient(0deg, rgb(136 78 90) 0%, rgb(42 31 63) 50%, rgb(13 12 43) 100%);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+small {
+  color: #fff;
+  font-size: 10px;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  a {
+    color: #fff;
+  }
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.scroll {
+  position: relative
+}
+
+.scroll__line {
+  width: 2px;
+  height: 50px;
+  position: absolute;
+  bottom: 0px;
+  left: calc(50% - 1px);
+  overflow: hidden;
+  opacity: 0;
+}
+
+.scroll__line::before {
+  content: "";
+  display: block;
+  width: 2px;
+  height: 60px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #fff;
+  -webkit-animation: lineAnim 1.8s cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite;
+  animation: lineAnim 1.8s cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite
+}
+
+@keyframes lineAnim {
+  0% {
+    -webkit-transform: translateY(-100%);
+    transform: translateY(-100%)
+  }
+
+  100% {
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%)
+  }
+}
+
+.section {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+}
+
+.section__inner {
+  width: 100%;
+  max-width: 1280px;
+  padding: 0 20px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200vh;
+  position: relative;
+
+  .section01 & {
+    height: 100vh;
+  }
+
+  .section04 & {
+    height: 100vh;
+  }
+}
+
+.ttl {
+  font-size: min(20vw, 32vh);
+  line-height: 0.9;
+  white-space: nowrap;
+  opacity: 0;
+  &__inner {
+    display: block;
+    overflow: hidden;
+  }
+  &__txts {
+    // line-height: 0.9;
+    display: inline-block;
+    transform: translateY(100%);
+  }
+}
+
+h2 {
+  font-size: 6vw;
+}
