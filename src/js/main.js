@@ -5,8 +5,6 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
-import Lenis from '@studio-freight/lenis';
-
 
 class Main {
   constructor() {
@@ -14,6 +12,9 @@ class Main {
       width: window.innerWidth,
       height: window.innerHeight
     };
+
+    this.DOM = {};
+    this.DOM.controlBtns = document.querySelectorAll('.js-control-btn');
 
     this.canvas = document.querySelector("#canvas");
 
@@ -38,14 +39,10 @@ class Main {
 
     this.scene = new THREE.Scene();
     this.camera = null;
-    this.mesh = null;
+    this.cameras = [];
 
     this.controls = null;
 
-    this.lenis = new Lenis({
-      duration: 1.2,
-    });
-    this.lenis.stop();
 
     this._init();
 
@@ -77,36 +74,41 @@ class Main {
       const model = gltf.scene;
       this.animations = gltf.animations;
 
-      this.camera = gltf.cameras[0];
+      // Animation Mixerインスタンスを生成
+      this.mixer = new THREE.AnimationMixer(model);
 
-      if(this.animations && this.animations.length) {
+      // GLTFファイル内のすべてのカメラを配列に追加
+      this.cameras = gltf.cameras;
+      this.camera = this.cameras[0];
+
+      // if(this.animations && this.animations.length) {
  
-          //Animation Mixerインスタンスを生成
-          this.mixer = new THREE.AnimationMixer(model);
+      //     //Animation Mixerインスタンスを生成
+      //     this.mixer = new THREE.AnimationMixer(model);
   
-          //全てのAnimation Clipに対して
-          for (let i = 0; i < this.animations.length; i++) {
-              let animation = this.animations[i];
+      //     //全てのAnimation Clipに対して
+      //     for (let i = 0; i < this.animations.length; i++) {
+      //         let animation = this.animations[i];
   
-              //Animation Actionを生成
-              let action = this.mixer.clipAction(animation) ;
+      //         //Animation Actionを生成
+      //         let action = this.mixer.clipAction(animation) ;
   
-              //ループ設定
-              action.setLoop(THREE.LoopOnce); // 1回再生
-              // action.setLoop(THREE.LoopRepeat); // ループ再生
+      //         //ループ設定
+      //         action.setLoop(THREE.LoopOnce); // 1回再生
+      //         // action.setLoop(THREE.LoopRepeat); // ループ再生
   
-              //アニメーションの最後のフレームでアニメーションが終了
-              action.clampWhenFinished = true;
+      //         //アニメーションの最後のフレームでアニメーションが終了
+      //         action.clampWhenFinished = true;
   
-              //アニメーションを再生
-              action.play();
-          }
+      //         //アニメーションを再生
+      //         action.play();
+      //     }
             
-          this._addEventScroll();
+      //     // this._addEventScroll();
 
-          this._loadAnimation();
-          this._scrollAnimation();
-      }
+      //     this._loadAnimation();
+      //     // this._scrollAnimation();
+      // }
 
 
       this.scene.add(model);
@@ -117,31 +119,46 @@ class Main {
     });
   }
 
-  _addMesh() {
-    const geometry = new THREE.BoxGeometry(50, 50, 50);
-    const material = new THREE.MeshStandardMaterial({color: 0x444444});
-    this.mesh = new THREE.Mesh(geometry, material);
-    this.scene.add(this.mesh);
+  _playAnimation(index) {
+    if (!this.animations || !this.animations[index]) return;
+
+    // 既存のアクションを停止
+    this.mixer.stopAllAction();
+
+    // 指定のアニメーションを取得して再生
+    const animation = this.animations[index];
+    const action = this.mixer.clipAction(animation);
+    action.setLoop(THREE.LoopOnce);
+    action.clampWhenFinished = true;
+    action.play();
   }
+
+  _switchCamera(index) {
+    if (this.cameras[index]) {
+      this.camera = this.cameras[index]; // 指定のカメラに切り替え
+      this._playAnimation(index); // 対応するアニメーションを再生
+    }
+  }
+
 
   _loadAnimation() {  
     // ロード時のアニメーション
-    const tlToStart = gsap.timeline({
-      onUpdate: () => {
-        this.mixer.update(this.clock.getDelta()); // startTimeまでのアニメーションを再生
-      }
-    });
-    tlToStart.to(this.mixer, {
-      duration: this.startTime,
-      onStart: () => {
-        tlLoadAnimation.play();
-      }
-    });
+    // const tlToStart = gsap.timeline({
+    //   // onUpdate: () => {
+    //   //   this.mixer.update(this.clock.getDelta()); // startTimeまでのアニメーションを再生
+    //   // }
+    // });
+    // tlToStart.to(this.mixer, {
+    //   duration: this.startTime,
+    //   onStart: () => {
+    //     tlLoadAnimation.play();
+    //   }
+    // });
 
-    const tlLoadAnimation = gsap.timeline({ paused: true });
+    const tlLoadAnimation = gsap.timeline({});
     tlLoadAnimation.to('.js-ttl', {
       opacity: 1,
-      delay: 1.4,
+      delay: 0.6,
     })
     .to('.js-ttl-txts', {
       y: 0,
@@ -149,34 +166,21 @@ class Main {
       ease: 'circ.out',
       stagger: 0.03,
       onComplete: () => {
-        this.lenis.start();
+        // this.lenis.start();
       }
     })
-    .to('.js-scroll-line', {
-      opacity: 1,
-      duration: 0.3,
-    });
+    .to('.js-ttl-txts', {
+      y: '-100%',
+      duration: 0.6,
+      ease: 'circ.out',
+      stagger: 0.03,
+      onComplete: () => {
+        // this.lenis.start();
+      }
+    }, '+=2.0')
+
   }
 
-  _scrollAnimation() {
-    const tlScrollAnimation = gsap.timeline({
-      scrollTrigger: {
-        trigger: '.js-section-02',
-        start: 'top 96%',
-        onLeaveBack: () => tlScrollAnimation.reverse(), // 逆再生させる
-        // markers: true,
-      }
-    });
-    tlScrollAnimation.to('.js-ttl-txts', {
-      duration: 0.9,
-      ease: 'circ.inOut',
-      y: '-100%',
-    })
-    .to('.js-scroll-line', {
-      opacity: 0,
-      duration: 0.3,
-    }, 0)
-  }
 
   _init() {
     // this._setCamera();
@@ -186,9 +190,11 @@ class Main {
     this._addModel();
   }
 
-  _update(time) {
+  _update() {
 
-    this.lenis.raf(time);
+    // this.lenis.raf(time);
+
+    this.mixer && this.mixer.update(this.clock.getDelta());
 
     //レンダリング
     this.renderer.render(this.scene, this.camera);
@@ -209,39 +215,21 @@ class Main {
     this.camera.updateProjectionMatrix();
   }
 
-  _scrollReset() {
-    window.scrollTo(0, 0);
-  }
 
   _addEvent() {
     window.addEventListener("resize", this._onResize.bind(this));
-    window.addEventListener("beforeunload", this._scrollReset.bind(this));
-  }
 
-  _addEventScroll() {
+    // ボタンにクリックイベントを追加
+    document.querySelector("[data-animation='0']").addEventListener("click", () => {
+      this._switchCamera(0); // 1番目のアニメーションを再生
+    });
 
-    console.log(this.animations);
-
-    // スクロールとカメラアニメーションの連動
-    window.addEventListener('scroll', () => {
-      const scrollY = window.scrollY; // スクロール量
-      const scrollHeight = document.querySelector('.scroll').clientHeight; // スクロール領域の高さ
-      const viewportHeight = window.innerHeight;
-      const scrollProgress = scrollY / (scrollHeight - viewportHeight); // スクロールの進捗度0~1
-
-      this.animations.forEach(animation => {
-        const animationDuration = animation.duration;
-        const animationTime = scrollProgress * (animationDuration - this.startTime) + this.startTime;
-        
-        const action = this.mixer.existingAction(animation);
-        action.reset();
-        this.mixer.setTime(animationTime); // アニメーションの時間を設定
-
-        // console.log(this.mixer)
-      });
-      this.renderer.render(this.scene, this.camera);
+    document.querySelector("[data-animation='1']").addEventListener("click", () => {
+      this._switchCamera(1); // 2番目のアニメーションを再生
     });
   }
+
+
 }
 
 new Main();

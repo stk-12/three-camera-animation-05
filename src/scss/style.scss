@@ -52,45 +52,6 @@ canvas {
   left: 0;
 }
 
-.scroll {
-  position: relative
-}
-
-.scroll__line {
-  width: 2px;
-  height: 50px;
-  position: absolute;
-  bottom: 0px;
-  left: calc(50% - 1px);
-  overflow: hidden;
-  opacity: 0;
-}
-
-.scroll__line::before {
-  content: "";
-  display: block;
-  width: 2px;
-  height: 60px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: #fff;
-  -webkit-animation: lineAnim 1.8s cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite;
-  animation: lineAnim 1.8s cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite
-}
-
-@keyframes lineAnim {
-  0% {
-    -webkit-transform: translateY(-100%);
-    transform: translateY(-100%)
-  }
-
-  100% {
-    -webkit-transform: translateY(100%);
-    transform: translateY(100%)
-  }
-}
-
 .section {
   display: flex;
   justify-content: space-evenly;
@@ -112,10 +73,6 @@ canvas {
   .section01 & {
     height: 100vh;
   }
-
-  .section04 & {
-    height: 100vh;
-  }
 }
 
 .ttl {
@@ -134,6 +91,30 @@ canvas {
   }
 }
 
-h2 {
-  font-size: 6vw;
+.controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  gap: 20px;
+
+  &__btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    appearance: none;
+
+    background: #fff;
+    font-size: 24px;
+    font-family: Bebas Neue,cursive;
+    padding: 8px 32px;
+    border-radius: 60px;
+  }
 }
