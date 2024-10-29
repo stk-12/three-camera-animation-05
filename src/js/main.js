@@ -164,6 +164,11 @@ class Main {
   _switchCamera(index) {
     if (this.cameras[index]) {
       this.camera = this.cameras[index]; // 指定のカメラに切り替え
+
+      // カメラのアスペクト比を現在のウィンドウサイズに合わせる
+      this.camera.aspect = this.viewport.width / this.viewport.height;
+      this.camera.updateProjectionMatrix(); // プロジェクションマトリックスを更新
+
       this._playAnimation(index);
     }
   }
