@@ -14,7 +14,8 @@ class Main {
     };
 
     this.DOM = {};
-    this.DOM.controlBtns = document.querySelectorAll('.js-control-btn');
+    this.DOM.control = document.querySelector('.js-controls');
+    this.DOM.controlBtns = document.querySelectorAll('.js-btn-control');
 
     this.canvas = document.querySelector("#canvas");
 
@@ -228,20 +229,23 @@ class Main {
     this.camera.updateProjectionMatrix();
   }
 
+  _handleBtnClick(event) {
+    const animationType = event.target.dataset.animation;
+
+    if(animationType === 'back') {
+      this._reverseAnimation();
+    } else {
+      const animationIndex = parseInt(animationType, 10) - 1;
+      this._switchCamera(animationIndex);
+    }
+  }
+
 
   _addEvent() {
     window.addEventListener("resize", this._onResize.bind(this));
 
-    document.querySelector("[data-animation='1']").addEventListener("click", () => {
-      this._switchCamera(0); // 1番目のアニメーションを再生
-    });
-
-    document.querySelector("[data-animation='2']").addEventListener("click", () => {
-      this._switchCamera(1); // 2番目のアニメーションを再生
-    });
-
-    document.querySelector("[data-animation='back']").addEventListener("click", () => {
-      this._reverseAnimation(); // 逆再生で元の位置に戻す
+    this.DOM.controlBtns.forEach((btn) => {
+      btn.addEventListener('click', this._handleBtnClick.bind(this));
     });
   }
 
