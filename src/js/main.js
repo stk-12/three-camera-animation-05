@@ -32,6 +32,7 @@ class Main {
 
     this.animations = null;
     this.mixer = null;
+    this.currentAction = null; // 再生中のアクション
 
     this.startTime = 0.1;
 
@@ -123,20 +124,32 @@ class Main {
     if (!this.animations || !this.animations[index]) return;
 
     // 既存のアクションを停止
-    this.mixer.stopAllAction();
+    // this.mixer.stopAllAction();
+    if (this.currentAction) {
+      this.currentAction.stop();
+    }
 
     // 指定のアニメーションを取得して再生
     const animation = this.animations[index];
-    const action = this.mixer.clipAction(animation);
-    action.setLoop(THREE.LoopOnce);
-    action.clampWhenFinished = true;
-    action.play();
+    this.currentAction = this.mixer.clipAction(animation);
+    this.currentAction.setLoop(THREE.LoopOnce);
+    this.currentAction.clampWhenFinished = true;
+    this.currentAction.timeScale = 1; // 通常再生
+    this.currentAction.play();
+  }
+
+  _reverseAnimation() {
+    if (this.currentAction) {
+      this.currentAction.paused = false; // 再生中にする
+      this.currentAction.timeScale = -1; // 逆再生
+      this.currentAction.play();
+    }
   }
 
   _switchCamera(index) {
     if (this.cameras[index]) {
       this.camera = this.cameras[index]; // 指定のカメラに切り替え
-      this._playAnimation(index); // 対応するアニメーションを再生
+      this._playAnimation(index);
     }
   }
 
@@ -219,13 +232,16 @@ class Main {
   _addEvent() {
     window.addEventListener("resize", this._onResize.bind(this));
 
-    // ボタンにクリックイベントを追加
-    document.querySelector("[data-animation='0']").addEventListener("click", () => {
+    document.querySelector("[data-animation='1']").addEventListener("click", () => {
       this._switchCamera(0); // 1番目のアニメーションを再生
     });
 
-    document.querySelector("[data-animation='1']").addEventListener("click", () => {
+    document.querySelector("[data-animation='2']").addEventListener("click", () => {
       this._switchCamera(1); // 2番目のアニメーションを再生
+    });
+
+    document.querySelector("[data-animation='back']").addEventListener("click", () => {
+      this._reverseAnimation(); // 逆再生で元の位置に戻す
     });
   }
 
