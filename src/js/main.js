@@ -115,6 +115,8 @@ class Main {
 
       this.scene.add(model);
 
+      this._onResize();
+
       this._update();
 
 
@@ -130,6 +132,10 @@ class Main {
       this.currentAction.stop();
     }
 
+    this.DOM.control.classList.add('is-forward');
+    this.DOM.control.classList.remove('is-back');
+    this.DOM.control.classList.remove('is-default');
+
     // 指定のアニメーションを取得して再生
     const animation = this.animations[index];
     this.currentAction = this.mixer.clipAction(animation);
@@ -144,6 +150,14 @@ class Main {
       this.currentAction.paused = false; // 再生中にする
       this.currentAction.timeScale = -1; // 逆再生
       this.currentAction.play();
+
+      this.DOM.control.classList.add('is-back');
+      this.DOM.control.classList.remove('is-forward');
+
+      this.currentAction.getMixer().addEventListener('finished', () => {
+        this.DOM.control.classList.add('is-default');
+        this.DOM.control.classList.remove('is-back');
+      })
     }
   }
 
