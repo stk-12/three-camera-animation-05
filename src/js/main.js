@@ -72,7 +72,7 @@ class Main {
   }
 
   _addModel() {
-    this.loader.load('model/island2.glb', (gltf) => {
+    this.loader.load('model/island3.glb', (gltf) => {
       const model = gltf.scene;
       this.animations = gltf.animations;
 
