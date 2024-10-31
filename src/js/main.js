@@ -141,14 +141,14 @@ class Main {
     this.currentAction = this.mixer.clipAction(animation);
     this.currentAction.setLoop(THREE.LoopOnce);
     this.currentAction.clampWhenFinished = true;
-    this.currentAction.timeScale = 1; // 通常再生
+    this.currentAction.timeScale = 1.5; // 通常再生
     this.currentAction.play();
   }
 
   _reverseAnimation() {
     if (this.currentAction) {
       this.currentAction.paused = false; // 再生中にする
-      this.currentAction.timeScale = -1; // 逆再生
+      this.currentAction.timeScale = -1.5; // 逆再生
       this.currentAction.play();
 
       this.DOM.control.classList.add('is-back');
