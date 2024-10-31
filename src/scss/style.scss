@@ -76,7 +76,7 @@ canvas {
 }
 
 .ttl {
-  font-size: min(20vw, 32vh);
+  font-size: min(18vw, 30vh);
   line-height: 0.9;
   white-space: nowrap;
   opacity: 0;
@@ -102,16 +102,24 @@ canvas {
   justify-content: center;
   z-index: 10;
   gap: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s linear;
+
+  &.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
 
   &__group {
     display: flex;
     gap: 20px;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s linear;
   }
 
   &__group--back {
     position: absolute;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s linear;
     transition-delay: 0.2s;
   }
 

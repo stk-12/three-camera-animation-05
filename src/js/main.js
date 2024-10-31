@@ -198,9 +198,9 @@ class Main {
       duration: 0.6,
       ease: 'circ.out',
       stagger: 0.03,
-      onComplete: () => {
-        // this.lenis.start();
-      }
+      // onComplete: () => {
+      //   // this.lenis.start();
+      // }
     })
     .to('.js-ttl-txts', {
       y: '-100%',
@@ -209,6 +209,7 @@ class Main {
       stagger: 0.03,
       onComplete: () => {
         // this.lenis.start();
+        this.DOM.control.classList.add('is-active');
       }
     }, '+=2.0')
 
@@ -221,6 +222,7 @@ class Main {
     this._setLight();
     // this._addMesh();
     this._addModel();
+    this._loadAnimation();
   }
 
   _update() {
